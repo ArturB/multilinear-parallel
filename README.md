@@ -1,2 +1,2 @@
 # multilinear-parallel
-Thread parallelism extension of Multilinear package in Haskell. 
+This package instroduce thread parallelism extension to (https://github.com/ArturB/multilinear)[Multilinear] package in Haskell. 
