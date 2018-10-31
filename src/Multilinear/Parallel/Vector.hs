@@ -2,7 +2,7 @@
 Module      : Multilinear.Vector
 Description : Vector constructors (finitely- or infinitely-dimensional)
 Copyright   : (c) Artur M. Brodzki, 2017
-License     : GPL-3
+License     : BSD3
 Maintainer  : artur.brodzki@gmail.com
 Stability   : experimental
 Portability : Windows/POSIX

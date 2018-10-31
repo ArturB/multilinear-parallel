@@ -1,6 +1,6 @@
-name:                multilinear-parallel
+name:                multilinear
 version:             0.2.0
-github:              "ArturB/multilinear-parallel"
+github:              "ArturB/multilinear"
 license:             BSD3
 author:              "Artur M. Brodzki"
 maintainer:          "artur@brodzki.org"
@@ -10,13 +10,13 @@ extra-source-files:
 - README.md
 
 # Metadata used when publishing your package
-synopsis:            Thread parallelism extension for Multilinear package in Haskell. 
+synopsis:            Efficient (multi)linear algebra implementation
 category:            Machine learning
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/ArturB/multilinear-parallel#readme>
+description:         Please see the README on GitHub at <https://github.com/ArturB/multilinear#readme>
 
 dependencies:
 - base >= 4.7 && < 5
@@ -32,21 +32,12 @@ default-extensions:
 library:
   source-dirs: src
   dependencies:
-  - aeson
-  - bytestring
-  - cereal
-  - cereal-vector
-  - csv-enumerator
+  - containers
   - deepseq
-  - either
-  - multilinear
   - mwc-random
-  - parallel
   - primitive
   - statistics
-  - transformers
   - vector
-  - zlib
 
 tests:
   multilinear-test:
@@ -57,17 +48,9 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N  
     dependencies:
+    - criterion
     - deepseq
-    - either
     - multilinear
-    - multilinear-parallel
-    - mwc-random
-    - parallel
-    - primitive
-    - process
-    - statistics
-    - transformers
-    - vector
 
 benchmarks:
   multilinear-bench:
@@ -80,12 +63,4 @@ benchmarks:
     dependencies:
     - criterion
     - deepseq
-    - either
     - multilinear
-    - multilinear-parallel
-    - mwc-random
-    - parallel
-    - primitive
-    - statistics
-    - transformers
-    - vector

@@ -1,62 +1,53 @@
 {-|
-Module      : Multilinear.NForm
-Description : N-Forms, dot and cross product and determinant
-Copyright   : (c) Artur M. Brodzki, 2017
-License     : GLP-3
-Maintainer  : artur.brodzki@gmail.com
+Module      : Multilinear.NVector
+Description : N-Vectors constructors (finitely- or infinitely-dimensional)
+Copyright   : (c) Artur M. Brodzki, 2018
+License     : BSD3
+Maintainer  : artur@brodzki.org
 Stability   : experimental
 Portability : Windows/POSIX
 
-- This module provides convenient constructors that generates n-forms (tensors with n lower indices with finite or infinite size). 
-- Finitely-dimensional n-forms provide much greater performance than infinitely-dimensional
+- This module provides convenient constructors that generate a n-vector (tensor with n upper indices with finite or infinite size).  
+- Finitely-dimensional n-vectors provide much greater performance than infinitely-dimensional
 
 -}
 
-module Multilinear.NForm (
-    -- * Generators
-  Multilinear.NForm.fromIndices, 
-  Multilinear.NForm.const,
-  Multilinear.NForm.randomDouble, 
-  Multilinear.NForm.randomDoubleSeed,
-  Multilinear.NForm.randomInt, 
-  Multilinear.NForm.randomIntSeed,
-  -- * Common cases
-  Multilinear.NForm.dot, 
-  Multilinear.NForm.cross
+module Multilinear.NVector (
+  -- * Generators
+  Multilinear.NVector.fromIndices, 
+  Multilinear.NVector.const,
+  Multilinear.NVector.randomDouble, 
+  Multilinear.NVector.randomDoubleSeed,
+  Multilinear.NVector.randomInt, 
+  Multilinear.NVector.randomIntSeed,
 ) where
 
 import           Control.Monad.Primitive
 import           Multilinear.Generic
-import qualified Multilinear.Tensor       as Tensor
+import           Multilinear.Tensor          as Tensor
 import           Statistics.Distribution
 
-invalidIndices :: String
-invalidIndices = "Indices and its sizes incompatible with n-form structure!"
-
-invalidCrossProductIndices :: String
-invalidCrossProductIndices = "Indices and its sizes incompatible with cross product structure!"
-
-{-| Generate N-form as function of its indices -}
+{-| Generate n-vector as function of its indices -}
 {-# INLINE fromIndices #-}
 fromIndices :: (
     Num a
   ) => String        -- ^ Indices names (one characted per index)
     -> [Int]         -- ^ Indices sizes
     -> ([Int] -> a)  -- ^ Generator function
-    -> Tensor a      -- ^ Generated N-form
+    -> Tensor a      -- ^ Generated n-vector
 
-fromIndices d ds f = Tensor.fromIndices ([],[]) (d,ds) $ \[] -> f
+fromIndices u us f = Tensor.fromIndices (u,us) ([],[]) $ \uis [] -> f uis
 
-{-| Generate N-form with all components equal to @v@ -}
+{-| Generate n-vector with all components equal to @v@ -}
 {-# INLINE Multilinear.NForm.const #-}
 const :: (
     Num a
   ) => String    -- ^ Indices names (one characted per index)
     -> [Int]     -- ^ Indices sizes
-    -> a         -- ^ N-form elements value
-    -> Tensor a  -- ^ Generated N-form
+    -> a         -- ^ n-vector elements value
+    -> Tensor a  -- ^ Generated n-vector
 
-const d ds = Tensor.const ([],[]) (d,ds)
+const u us = Tensor.const (u,us) ([],[])
 
 {-| Generate n-vector with random real components with given probability distribution.
 The n-vector is wrapped in the IO monad. -}
@@ -80,7 +71,7 @@ randomDouble :: (
     -> d                   -- ^ Continuous probability distribution (as from "Statistics.Distribution")
     -> IO (Tensor Double)  -- ^ Generated linear functional
 
-randomDouble d ds = Tensor.randomDouble ([],[]) (d,ds)
+randomDouble u us = Tensor.randomDouble (u,us) ([],[])
 
 {-| Generate n-vector with random integer components with given probability distribution.
 The n-vector is wrapped in the IO monad. -}
@@ -97,7 +88,7 @@ randomInt :: (
     -> d                   -- ^ Discrete probability distribution (as from "Statistics.Distribution")
     -> IO (Tensor Int)     -- ^ Generated n-vector
 
-randomInt d ds = Tensor.randomInt ([],[]) (d,ds)
+randomInt u us = Tensor.randomInt (u,us) ([],[])
 
 {-| Generate n-vector with random real components with given probability distribution and given seed.
 The form is wrapped in a monad. -}
@@ -122,7 +113,7 @@ randomDoubleSeed :: (
     -> Int               -- ^ Randomness seed
     -> m (Tensor Double) -- ^ Generated n-vector
 
-randomDoubleSeed d ds = Tensor.randomDoubleSeed ([],[]) (d,ds)
+randomDoubleSeed u us = Tensor.randomDoubleSeed (u,us) ([],[])
 
 {-| Generate n-vector with random integer components with given probability distribution and given seed.
 The form is wrapped in a monad. -}
@@ -140,29 +131,4 @@ randomIntSeed :: (
     -> Int               -- ^ Randomness seed
     -> m (Tensor Int)    -- ^ Generated n-vector
 
-randomIntSeed d ds = Tensor.randomIntSeed ([],[]) (d,ds)
-
-{-| 2-form representing a dot product -}
-{-# INLINE dot #-}
-dot :: (
-    Num a
-  ) => String    -- ^ Indices names (one characted per index)
-    -> Int       -- ^ Size of tensor (dot product is a square tensor)
-    -> Tensor a  -- ^ Generated dot product
-
-dot [i1,i2] size = fromIndices [i1,i2] [size,size] (\[i,j] -> if i == j then 1 else 0)
-dot _ _ = Err invalidIndices
-
-{-| Tensor representing a cross product (Levi - Civita symbol). It also allows to compute a determinant of square matrix - determinant of matrix @M@ is a equal to length of cross product of all columns of @M@ -}
--- // TODO
-{-# INLINE cross #-}
-cross :: (
-    Num a
-  ) => String    -- ^ Indices names (one characted per index)
-    -> Int       -- ^ Size of tensor (dot product is a square tensor)
-    -> Tensor a  -- ^ Generated dot product
-
-cross [i,j,k] size =
-  Tensor.fromIndices ([i],[size]) ([j,k],[size,size])
-    (\[_] [_,_] -> 0)
-cross _ _ = Err invalidCrossProductIndices
+randomIntSeed u us = Tensor.randomIntSeed (u,us) ([],[])
